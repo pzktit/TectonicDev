@@ -1,0 +1,46 @@
+name: Build Docker image
+
+on:
+  # schedule:
+  #   - cron: '7 3 10 * *'
+  push:
+    tags: [ 'b*.*.*' , 'v*']
+    branches: [ "release" ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Docker Login
+      uses: docker/login-action@v2.1.0
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Docker Metadata action
+      uses: docker/metadata-action@v4.3.0
+      id: meta
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v4.0.0
+      with:
+        context: .
+        file: Dockerfile
+        push: true
+        tags: ghcr.io/pzktit/tectonicdev:latest,${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}

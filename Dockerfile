@@ -27,11 +27,3 @@ WORKDIR /usr/local/bin
 
 # tectonic
 RUN curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net |sh
-
-# USER vscode
-# WORKDIR /home/vscode
-
-# RUN /home/vscode/.vscode-server/bin/*/bin/code-server --install-extension "james-yu.latex-workshop" && \
-#     /home/vscode/.vscode-server/bin/*/bin/code-server --install-extension "valentjn.vscode-ltex"
-
-# USER vscode
